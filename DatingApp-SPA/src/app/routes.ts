@@ -6,17 +6,23 @@ import { MessagesComponent } from './messages/messages.component';
 import { AuthGuard } from './_guards/auth.guard';
 
 export const appRoutes: Routes = [
+    /*
+    home will reached by an empty path,
+    otherwise browsing http://localhost:4200/ will show an empty 'homepage'
+    */
     { path: '', component: HomeComponent },
+    // dummy route (empty path) to apply guard to all (child) path
     {
-        // dummy route to apply guard to all (child) path
         path: '',
         runGuardsAndResolvers: 'always',
         canActivate: [AuthGuard],
+        // Append an empty path to child path will finally be the path to be protected.
         children : [
             { path: 'members', component: MemberListComponent },
             { path: 'messages', component: MessagesComponent },
             { path: 'lists', component: ListsComponent },
         ]
     },
+    // all other path are redirected to home
     { path: '**', redirectTo: '', pathMatch: 'full'}
 ];
