@@ -5,6 +5,8 @@ import { Observable } from 'rxjs';
 import { User } from '../_models/user';
 import { PaginatedResult } from '../_models/pagination';
 import { map } from 'rxjs/operators';
+import { Message } from '../_models/message';
+
 
 
 @Injectable({
@@ -52,13 +54,13 @@ export class UserService {
       );
   }
 
-  getUser(id): Observable<User> {
-    // return this.http.get<User>(this.baseUrl + 'users/' + id, httpOptions);
-    return this.http.get<User>(this.baseUrl + 'users/' + id);
+  getUser(userId): Observable<User> {
+    // return this.http.get<User>(this.baseUrl + 'users/' + userId, httpOptions);
+    return this.http.get<User>(this.baseUrl + 'users/' + userId);
   }
 
-  updateUser(id: number, user: User) {
-    return this.http.put(this.baseUrl + 'users/' + id, user);
+  updateUser(userId: number, user: User) {
+    return this.http.put(this.baseUrl + 'users/' + userId, user);
   }
 
   setMainPhoto(userId: number, id: number) {
@@ -71,5 +73,47 @@ export class UserService {
 
   sendLike(userId: number, recipentId: number) {
     return this.http.post(this.baseUrl + 'users/' + userId + '/like/' + recipentId, {});
+  }
+
+  getMessages(userId: number, page?, itemsPerPage?, messageContainer?) {
+    const paginatedResult: PaginatedResult<Message[]> = new PaginatedResult<Message[]>();
+
+    let params = new HttpParams();
+
+    params = params.append('MessageContainer', messageContainer);
+
+    if (page != null && itemsPerPage != null) {
+      params = params.append('pageNumber', page);
+      params = params.append('pageSize', itemsPerPage);
+    }
+
+    return this.http.get<Message[]>(
+                  this.baseUrl + 'users/' + userId + '/messages', { observe: 'response', params }
+                ).pipe(
+                    map(response => {
+                      paginatedResult.result = response.body;
+                      if (response.headers.get('Pagination') != null) {
+                        paginatedResult.pagination = JSON.parse(response.headers.get('Pagination'));
+                      }
+
+                      return paginatedResult;
+                    })
+                  );
+  }
+
+  getMessageThread(userId: number, recipentId: number) {
+    return this.http.get<Message[]>(this.baseUrl + 'users/' + userId + '/messages/thread/' + recipentId);
+  }
+
+  sendMessage(userId: number, message: Message) {
+    return this.http.post(this.baseUrl + 'users/' + userId + '/messages', message);
+  }
+
+  deleteMessage(userId: number, id: number) {
+    return this.http.post(this.baseUrl + 'users/' + userId + '/messages/' + id, {});
+  }
+
+  markMessageAsRead(userId: number, id: number) {
+    return this.http.post(this.baseUrl + 'users/' + userId + '/messages/' + id + '/read', {}).subscribe();
   }
 }
