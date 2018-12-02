@@ -13,7 +13,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace DatingApp.API.Controllers
 {
     [ServiceFilter(typeof(LogUserActivity))]
-    [Authorize]
     [Route("api/users/{userId}/[controller]")]
     [ApiController]
     public class MessagesController : ControllerBase
@@ -82,8 +81,8 @@ namespace DatingApp.API.Controllers
             messageForCreationDto.SenderId = userId;
 
             // AutoMapper will include the properties by convention
-            var sender = await _repo.GetUser(userId);
-            var recipient = await _repo.GetUser(messageForCreationDto.RecipientId);
+            var sender = await _repo.GetUser(userId, false);
+            var recipient = await _repo.GetUser(messageForCreationDto.RecipientId, false);
 
             if (recipient == null)
                 return BadRequest("Could not find user!");

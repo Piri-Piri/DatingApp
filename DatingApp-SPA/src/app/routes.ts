@@ -12,6 +12,7 @@ import { MemberDetailResolver } from './_resolvers/member-detail.resolver';
 import { MemberEditComponent } from './members/member-edit/member-edit.component';
 import { MemberEditResolver } from './_resolvers/member-edit.resolver';
 import { MessagesResolver } from './_resolvers/messages.resolver';
+import { AdminPanelComponent } from './admin/admin-panel/admin-panel.component';
 
 export const appRoutes: Routes = [
     /*
@@ -42,6 +43,10 @@ export const appRoutes: Routes = [
             { path: 'lists',
                 component: ListsComponent,
                 resolve: { users: ListsResolver } },
+            { path: 'admin',
+                component: AdminPanelComponent,
+                data: { roles: ['Admin', 'Moderator']}
+            }
         ]
     },
     // all other path are redirected to home

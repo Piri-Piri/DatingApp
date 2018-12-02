@@ -12,6 +12,19 @@ input[type=file] {
     color: transparent;
 }
 
+.not-approved {
+    opacity: 0.2;
+}
+
+.img-wrapper {
+    position: relative;
+}
+
+.img-text {
+    position: absolute;
+    bottom: 30%;
+}
+
 #upload_button {
     display: inline-block;
   }
